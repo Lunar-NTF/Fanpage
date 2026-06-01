@@ -1,34 +1,32 @@
 {
   "title": "Fan Club Tracker ✦",
-  "rapidApiKey": "YOUR_RAPIDAPI_KEY_HERE",
+  "rapidApiKey": "",
 
   "permSlots": [
     {
       "id": "perm-0",
-      "hashtag": "#ArtistName",
-      "keyword": "ArtistName",
+      "hashtag": "#NamtanFilm",
+      "keyword": "NamtanFilm",
       "goalK": 100
     },
     {
       "id": "perm-1",
-      "hashtag": "#ArtistName2",
-      "keyword": "ArtistName2",
+      "hashtag": "#น้ำตาลฟิล์ม",
+      "keyword": "น้ำตาลฟิล์ม",
       "goalK": 50
     }
   ],
 
   "events": [
     {
-      "id": "evt-example",
+      "id": "GR Final Episode",
       "name": "Fanmeeting Bangkok",
       "startDate": "2025-06-01",
-      "endDate": "2025-06-03",
+      "endDate": "2025-06-02",
       "goalK": 200,
-      "scope": "asia",
+      "scope": "all64",
       "tags": [
-        { "value": "#FanmeetingBangkok", "type": "hashtag" },
-        { "value": "#ArtistNameBKK",     "type": "hashtag" },
-        { "value": "Fanmeeting Bangkok", "type": "keyword" }
+        { "value": "#GirlRulesSeriesFinalEP ", "type": "hashtag" }
       ]
     }
   ]
