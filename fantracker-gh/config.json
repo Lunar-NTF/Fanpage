@@ -1,0 +1,35 @@
+{
+  "title": "Fan Club Tracker ✦",
+  "rapidApiKey": "YOUR_RAPIDAPI_KEY_HERE",
+
+  "permSlots": [
+    {
+      "id": "perm-0",
+      "hashtag": "#ArtistName",
+      "keyword": "ArtistName",
+      "goalK": 100
+    },
+    {
+      "id": "perm-1",
+      "hashtag": "#ArtistName2",
+      "keyword": "ArtistName2",
+      "goalK": 50
+    }
+  ],
+
+  "events": [
+    {
+      "id": "evt-example",
+      "name": "Fanmeeting Bangkok",
+      "startDate": "2025-06-01",
+      "endDate": "2025-06-03",
+      "goalK": 200,
+      "scope": "asia",
+      "tags": [
+        { "value": "#FanmeetingBangkok", "type": "hashtag" },
+        { "value": "#ArtistNameBKK",     "type": "hashtag" },
+        { "value": "Fanmeeting Bangkok", "type": "keyword" }
+      ]
+    }
+  ]
+}
