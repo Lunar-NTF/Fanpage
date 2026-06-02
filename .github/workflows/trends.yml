@@ -1,0 +1,45 @@
+# .github/workflows/trends.yml
+# Manual-only trend scan for events.
+# Go to GitHub → Actions → "Scan trends" → Run workflow
+
+name: Scan trends
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'Optional note (e.g. event name)'
+        required: false
+        default: 'manual scan'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run trend scan
+        env:
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+        run: npm run trends
+
+      - name: Commit trend results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/trends.json
+          git diff --staged --quiet || git commit -m "chore: trend scan — ${{ github.event.inputs.note }} [$(date -u +'%Y-%m-%d %H:%M')]"
+          git push
