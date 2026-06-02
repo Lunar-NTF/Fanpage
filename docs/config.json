@@ -20,13 +20,13 @@
   "events": [
     {
       "id": "GR Final Episode",
-      "name": "Fanmeeting Bangkok",
+      "name": "GR Final Episode",
       "startDate": "2025-06-01",
       "endDate": "2025-06-02",
       "goalK": 200,
       "scope": "all64",
       "tags": [
-        { "value": "#GirlRulesSeriesFinalEP ", "type": "hashtag" }
+        { "value": "#GirlRulesSeriesFinalEP", "type": "hashtag" }
       ]
     }
   ]
