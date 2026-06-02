@@ -139,7 +139,7 @@ async function main() {
     }
   }
 
-  const trendsPath = path.join(ROOT, 'data', 'trends.json');
+  const trendsPath = path.join(ROOT, 'docs', 'data', 'trends.json');
   // Merge with existing results (keep history of previous scans per tag)
   let existing = {};
   try { existing = JSON.parse(fs.readFileSync(trendsPath, 'utf8')); } catch {}

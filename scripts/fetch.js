@@ -75,7 +75,7 @@ async function main() {
   }
 
   // ── Save snapshot ──────────────────────────────────
-  const snapsPath = path.join(ROOT, 'data', 'snapshots.json');
+  const snapsPath = path.join(ROOT, 'docs', 'data', 'snapshots.json');
   let snaps = [];
   try { snaps = JSON.parse(fs.readFileSync(snapsPath, 'utf8')); } catch {}
   snaps.push(snapshot);

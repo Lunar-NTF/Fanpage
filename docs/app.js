@@ -61,9 +61,9 @@ async function loadData() {
   // config.json and data/ are one level up — served via raw.githubusercontent or relative path
   // We use relative paths that work when GitHub Pages serves from /docs
   const [cfgData, snapsData, trendsData] = await Promise.all([
-    fetchJSON('../config.json'),
-    fetchJSON('../data/snapshots.json'),
-    fetchJSON('../data/trends.json'),
+    fetchJSON('config.json'),
+    fetchJSON('data/snapshots.json'),
+    fetchJSON('data/trends.json'),
   ]);
 
   if (cfgData)    cfg       = cfgData;
