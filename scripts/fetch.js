@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.join(__dirname, '..');
 
 // ── Load config ────────────────────────────────────────
-const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
+const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'config.json'), 'utf8'));
 
 // API key: prefer env var (GitHub Secret) over config file
 const API_KEY = process.env.RAPIDAPI_KEY || cfg.rapidApiKey;

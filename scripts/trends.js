@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.join(__dirname, '..');
 
-const cfg     = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
+const cfg     = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'config.json'), 'utf8'));
 const API_KEY = process.env.RAPIDAPI_KEY || cfg.rapidApiKey;
 
 if (!API_KEY || API_KEY === 'YOUR_RAPIDAPI_KEY_HERE') {
