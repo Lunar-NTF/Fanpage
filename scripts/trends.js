@@ -1,7 +1,7 @@
 // scripts/trends.js
-// Run MANUALLY from GitHub Actions (workflow_dispatch).
-// Scans trend rank for all event tags across countries.
-// Saves results to data/trends.json
+// Manual-only. Scans all event tags across countries.
+// Keeps BEST RANK EVER per country across all scans.
+// Saves to docs/data/trends.json
 
 import fetch from 'node-fetch';
 import fs    from 'fs';
@@ -11,15 +11,16 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT      = path.join(__dirname, '..');
 
-const cfg     = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'config.json'), 'utf8'));
+const cfgPath = path.join(ROOT, 'docs', 'config.json');
+const cfg     = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
 const API_KEY = process.env.RAPIDAPI_KEY || cfg.rapidApiKey;
 
 if (!API_KEY || API_KEY === 'YOUR_RAPIDAPI_KEY_HERE') {
-  console.error('❌ No API key. Set RAPIDAPI_KEY secret in GitHub Actions.');
+  console.error('❌ No API key. Set RAPIDAPI_KEY in GitHub Secrets.');
   process.exit(1);
 }
 
-// ── Countries ──────────────────────────────────────────
+// ── Full countries list ────────────────────────────────
 const ASIA_ME = [
   { name:'Worldwide',    woeid:'1',        flag:'🌍', vn:'Worldwide',   isWW:true  },
   { name:'Japan',        woeid:'23424856',  flag:'🇯🇵', vn:'Japan'         },
@@ -95,7 +96,9 @@ const ALL_64 = [
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-function normTag(s) { return (s||'').toLowerCase().replace(/^#+/,'').replace(/\s+/g,'').trim(); }
+function normTag(s) {
+  return (s || '').toLowerCase().replace(/^#+/, '').replace(/\s+/g, '').trim();
+}
 function matches(a, b) {
   const na = normTag(a), nb = normTag(b);
   return na && nb && (na === nb || na.includes(nb) || nb.includes(na));
@@ -105,49 +108,75 @@ async function fetchRank(tag, vn) {
   try {
     const url = `https://twitter-api45.p.rapidapi.com/trends.php?country=${encodeURIComponent(vn)}`;
     const res = await fetch(url, {
-      headers: { 'x-rapidapi-key': API_KEY, 'x-rapidapi-host': 'twitter-api45.p.rapidapi.com' }
+      headers: {
+        'x-rapidapi-key':  API_KEY,
+        'x-rapidapi-host': 'twitter-api45.p.rapidapi.com',
+      },
     });
     if (!res.ok) return null;
-    const d = await res.json();
+    const d      = await res.json();
     const trends = Array.isArray(d.trends) ? d.trends : Array.isArray(d) ? d : [];
-    const idx = trends.findIndex(t => matches(t.name || '', tag));
+    const idx    = trends.findIndex(t => matches(t.name || '', tag));
     return idx >= 0 ? { rank: idx + 1, volume: trends[idx].tweet_volume || null } : null;
   } catch { return null; }
 }
 
 async function main() {
-  const events = (cfg.events || []).filter(ev => (ev.tags||[]).length > 0);
-  if (!events.length) { console.log('No events with tags configured.'); return; }
+  const events = (cfg.events || []).filter(ev => (ev.tags || []).length > 0);
+  if (!events.length) { console.log('No events configured.'); return; }
 
-  const results = {};
+  // Load existing trends to merge best ranks
+  const trendsPath = path.join(ROOT, 'docs', 'data', 'trends.json');
+  let existing = {};
+  try { existing = JSON.parse(fs.readFileSync(trendsPath, 'utf8')); } catch {}
 
   for (const ev of events) {
     const list = ev.scope === 'all64' ? ALL_64 : ASIA_ME;
-    console.log(`\n📍 Event: "${ev.name}" — scanning ${list.length} locations (${ev.scope||'asia'})…`);
+    console.log(`\n📍 "${ev.name}" — scanning ${list.length} locations (${ev.scope || 'asia'})…`);
 
     for (const t of ev.tags || []) {
-      console.log(`  Tag: ${t.value}`);
-      const tagResults = [];
+      console.log(`\n  Tag: ${t.value}`);
+      const newResults = [];
+
       for (const c of list) {
         process.stdout.write(`    ${c.flag} ${c.name} … `);
         const r = await fetchRank(t.value, c.vn);
-        tagResults.push({ name: c.name, flag: c.flag, isWW: c.isWW||false, rank: r?.rank||null, volume: r?.volume||null });
-        console.log(r ? `#${r.rank}` : '—');
+
+        // Get previous best rank for this country
+        const prevEntry   = existing[t.value]?.results || [];
+        const prevCountry = prevEntry.find(p => p.name === c.name);
+        const prevBest    = prevCountry?.bestRank || null;
+
+        // Calculate new best rank (lower number = better rank)
+        let newBest = prevBest;
+        if (r?.rank) {
+          newBest = prevBest ? Math.min(r.rank, prevBest) : r.rank;
+        }
+
+        newResults.push({
+          name:      c.name,
+          flag:      c.flag,
+          isWW:      c.isWW || false,
+          rank:      r?.rank   || null,   // current rank
+          volume:    r?.volume || null,   // current volume
+          bestRank:  newBest,             // best rank ever seen
+        });
+
+        console.log(r ? `#${r.rank} (best ever: #${newBest})` : `— (best ever: ${newBest ? '#'+newBest : '—'})`);
         await sleep(120);
       }
-      results[t.value] = { eventId: ev.id, eventName: ev.name, results: tagResults, timestamp: new Date().toISOString() };
+
+      existing[t.value] = {
+        eventId:   ev.id,
+        eventName: ev.name,
+        results:   newResults,
+        timestamp: new Date().toISOString(),
+      };
     }
   }
 
-  const trendsPath = path.join(ROOT, 'docs', 'data', 'trends.json');
-  // Merge with existing results (keep history of previous scans per tag)
-  let existing = {};
-  try { existing = JSON.parse(fs.readFileSync(trendsPath, 'utf8')); } catch {}
-  for (const [tag, data] of Object.entries(results)) {
-    existing[tag] = data;
-  }
   fs.writeFileSync(trendsPath, JSON.stringify(existing, null, 2));
-  console.log('\n✅ Trend results saved to data/trends.json');
+  console.log('\n✅ Trend results saved to docs/data/trends.json');
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

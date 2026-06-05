@@ -19,14 +19,15 @@
 
   "events": [
     {
-      "id": "GR Final Episode",
-      "name": "GR Final Episode",
-      "startDate": "2025-06-01",
-      "endDate": "2025-06-02",
+      "id": "ntf-Preawpak",
+      "name": "NamtanFilm on Preawpak",
+      "startDate": "2025-06-05",
+      "endDate": "2025-06-06",
       "goalK": 200,
-      "scope": "all64",
+      "scope": "asia",
       "tags": [
-        { "value": "#GirlRulesSeriesFinalEP", "type": "hashtag" }
+        { "value": "#PreawpakxNamtanFilm", "type": "hashtag" },
+        { "value": "NAMTANFILM DATE ON PREAWPAK", "type": "keyword" }
       ]
     }
   ]

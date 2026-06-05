@@ -13,9 +13,9 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <div class="mascots">🐼🌙🐥</div>
+    <div class="mascots">🐼🐣 🩵💛</div>
     <div class="header-text">
-      <h1 id="dashboard-title">Fan Club Tracker</h1>
+      <h1 id="dashboard-title">Fan Club Tracker ✦</h1>
       <p class="header-meta">
         <span class="live-dot" id="live-dot"></span>
         <span id="refresh-status">Loading…</span>
@@ -37,7 +37,6 @@
 
   <!-- LIVE -->
   <div id="tab-live" class="tab-panel">
-
     <section class="section perm-section">
       <div class="section-header">
         <h2 class="section-title perm-title">⭐ Artist — always tracking</h2>
@@ -56,7 +55,6 @@
         <div class="empty-state">Loading…</div>
       </div>
     </section>
-
   </div>
 
   <!-- BY COUNTRY -->
@@ -64,8 +62,8 @@
     <div class="section">
       <div class="countries-toolbar">
         <div class="field">
-          <label class="field-label">Select event tag</label>
-          <select id="country-tag-select" class="select"></select>
+          <label class="field-label">Event tag</label>
+          <select id="country-tag-select" class="select" onchange="renderCountryResults(this.value)"></select>
         </div>
         <div class="field">
           <label class="field-label">Last scanned</label>
@@ -73,10 +71,10 @@
         </div>
       </div>
       <p class="helper-text">
-        Trend data is updated by running the <strong>Scan trends</strong> workflow manually in GitHub Actions.
-        Go to your repo → <strong>Actions</strong> → <strong>Scan trends</strong> → <strong>Run workflow</strong>.
+        Run <strong>Scan trends</strong> in GitHub Actions → Actions → Scan trends → Run workflow.
+        Shows current rank, best rank ever achieved, and tweet volume per country.
       </p>
-      <div id="country-results"><div class="empty-state">Select a tag above to see latest trend scan results.</div></div>
+      <div id="country-results"><div class="empty-state">Select a tag above.</div></div>
     </div>
   </div>
 
@@ -84,15 +82,15 @@
   <div id="tab-history" class="tab-panel hidden">
     <div class="section">
       <div class="history-toolbar">
-        <select id="hist-tag"  class="select" onchange="renderHistory()" style="width:200px"></select>
+        <select id="hist-tag"  class="select" onchange="renderHistory()" style="width:220px"></select>
         <select id="hist-view" class="select" onchange="renderHistory()" style="width:120px">
           <option value="chart">Chart</option>
           <option value="table">Table</option>
         </select>
-        <button class="btn btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn btn-sm" onclick="exportCSV()">⬇ CSV</button>
       </div>
       <div id="history-content">
-        <div class="empty-state">History loads from data/snapshots.json — updated every 30 min.</div>
+        <div class="empty-state">History saves automatically every 30 min via GitHub Actions.</div>
       </div>
     </div>
   </div>

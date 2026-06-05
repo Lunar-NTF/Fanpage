@@ -1,7 +1,3 @@
-# .github/workflows/trends.yml
-# Manual-only trend scan for events.
-# Go to GitHub → Actions → "Scan trends" → Run workflow
-
 name: Scan trends
 
 on:
@@ -17,9 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -43,3 +41,10 @@ jobs:
           git add docs/data/trends.json
           git diff --staged --quiet || git commit -m "chore: trend scan — ${{ github.event.inputs.note }} [$(date -u +'%Y-%m-%d %H:%M')]"
           git push
+
+      - name: Trigger Pages redeploy
+        run: |
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/pages/builds || true
